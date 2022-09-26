@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### OOhub ###
+src/main/resources/application.yml
