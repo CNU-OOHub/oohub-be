@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://oohub-db.ce8cy9niwyu2.ap-northeast-2.rds.amazonaws.com:3306/oohub?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: Root1234!
