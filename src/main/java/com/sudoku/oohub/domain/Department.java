@@ -1,17 +1,14 @@
 package com.sudoku.oohub.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Department {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "department_id")
