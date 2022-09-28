@@ -1,6 +1,8 @@
 package com.sudoku.oohub.domain;
 
+import com.sudoku.oohub.dto.request.CreateMemberDto;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
