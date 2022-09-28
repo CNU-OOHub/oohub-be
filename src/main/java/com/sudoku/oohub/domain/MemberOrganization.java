@@ -10,15 +10,14 @@ import javax.persistence.*;
 @Entity
 public class MemberOrganization {
 
-    @EmbeddedId
-    private MemberOrganizationId id;
+    @Id
+    @Column(name = "memberOrganization_id")
+    private String id;
 
-    @MapsId("memberId")
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @MapsId("organizationId")
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
