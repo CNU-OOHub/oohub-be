@@ -25,8 +25,4 @@ public class Member {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id")
-    private Organization organization;
-
 }
