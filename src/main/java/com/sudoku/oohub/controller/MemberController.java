@@ -1,6 +1,7 @@
 package com.sudoku.oohub.controller;
 
 import com.sudoku.oohub.dto.request.CreateMemberDto;
+import com.sudoku.oohub.dto.request.LoginDto;
 import com.sudoku.oohub.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,5 @@ public class MemberController {
         Long memberId = memberService.join(createMemberDto);
         return ResponseEntity.ok(memberId);
     }
-
-
 
 }
