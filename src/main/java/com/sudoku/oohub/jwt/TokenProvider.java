@@ -27,8 +27,7 @@ public class TokenProvider {
 
         return JWT.create()
                 .withSubject(userDetails.getUsername()) // 토큰 이름
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000*10))) // 토큰 유효 시간 (10분)
-                // claim은 넣고 싶은 key, value 값 막 넣어도 됨
+                .withExpiresAt(new Date(System.currentTimeMillis() + (JwtProperties.EXPIRATION_TIME))) // 토큰 유효 시간 (10분)
                 .withClaim("id", userDetails.getMember().getId())
                 .withClaim("username", userDetails.getMember().getUsername())
                 .sign(Algorithm.HMAC512(secretKey));

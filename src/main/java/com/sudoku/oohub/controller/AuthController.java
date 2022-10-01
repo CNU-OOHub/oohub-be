@@ -2,6 +2,7 @@ package com.sudoku.oohub.controller;
 
 import com.sudoku.oohub.dto.request.LoginDto;
 import com.sudoku.oohub.dto.response.TokenDto;
+import com.sudoku.oohub.jwt.JwtProperties;
 import com.sudoku.oohub.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -40,7 +41,7 @@ public class AuthController {
         String jwt = tokenProvider.createToken(authentication);
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        httpHeaders.add("Authorization", "Bearer " + jwt);
+        httpHeaders.add(JwtProperties.HEADER_STRING,  JwtProperties.TOKEN_PREFIX + jwt);
 
         return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
     }
