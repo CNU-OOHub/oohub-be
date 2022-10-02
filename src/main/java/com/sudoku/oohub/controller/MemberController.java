@@ -1,10 +1,8 @@
 package com.sudoku.oohub.controller;
 
 import com.sudoku.oohub.dto.request.CreateMemberDto;
-import com.sudoku.oohub.dto.request.LoginDto;
 import com.sudoku.oohub.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
