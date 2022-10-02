@@ -1,7 +1,6 @@
 package com.sudoku.oohub.repository;
 
 import com.sudoku.oohub.domain.Member;
-import com.sudoku.oohub.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
