@@ -2,6 +2,7 @@ package com.sudoku.oohub.controller;
 
 import com.sudoku.oohub.dto.request.CreateMemberDto;
 import com.sudoku.oohub.service.MemberService;
+import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +22,8 @@ public class MemberController {
 
     @GetMapping("/v1/users")
     public ResponseEntity<String> test(){
-        return ResponseEntity.ok("성공");
+        String currentUsername = SecurityUtil.getCurrentUsername().orElseGet(null);
+        return ResponseEntity.ok(currentUsername);
     }
 
 }
