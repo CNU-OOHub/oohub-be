@@ -1,7 +1,6 @@
 package com.sudoku.oohub.config;
 
-import com.sudoku.oohub.jwt.JwtAuthorizationFilter;
-import com.sudoku.oohub.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +21,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
-    private final MemberRepository memberRepository;
+    private final JwtSecurityConfig jwtSecurityConfig;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -32,15 +32,14 @@ public class SecurityConfig {
                 .and().formLogin().disable()
                 .httpBasic().disable() // 자체 사용자 인증 x
 
-                .addFilter(corsFilter) // 모든 요청 허용 (CrossOrigin 인증 x)
-                .addFilter(new JwtAuthorizationFilter(
-                        authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),memberRepository)) // AuthenticationManager 필요!
                 .authorizeRequests()
                 .antMatchers("/api/hello").permitAll()
                 .antMatchers("/api/v1/login").permitAll()
                 .antMatchers("/api/v1/join").permitAll()
 
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .apply(jwtSecurityConfig);
 
         return http.build();
     }
