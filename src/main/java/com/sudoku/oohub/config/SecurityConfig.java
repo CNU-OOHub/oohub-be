@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .antMatchers("/api/hello").permitAll()
                 .antMatchers("/api/v1/login").permitAll()
                 .antMatchers("/api/v1/join").permitAll()
+                .antMatchers("/run/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
