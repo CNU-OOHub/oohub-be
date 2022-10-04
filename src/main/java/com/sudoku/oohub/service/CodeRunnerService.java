@@ -13,7 +13,7 @@ import java.util.List;
 public class CodeRunnerService {
 
     private final String pythonPath = "/usr/local/bin/python";
-    private final String runTarget = "run.py";
+    private final String runTarget = "src/run.py";
 
     // 한줄 실행
     public List<String> runOneLine(CommandDto commandDto) throws IOException, InterruptedException {

@@ -1,8 +1,6 @@
 package com.sudoku.oohub.config;
 
 import com.sudoku.oohub.jwt.JwtAuthorizationFilter;
-import com.sudoku.oohub.jwt.TokenProvider;
-import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
