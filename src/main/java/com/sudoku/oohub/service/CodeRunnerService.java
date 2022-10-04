@@ -17,7 +17,7 @@ public class CodeRunnerService {
         BufferedWriter writer;
         try {
             System.out.println(command);
-            writer = new BufferedWriter(new FileWriter("run.py"));
+            writer = new BufferedWriter(new FileWriter(runTarget));
             writer.write(command);
             writer.close();
             System.out.println("success write");
@@ -48,7 +48,7 @@ public class CodeRunnerService {
 
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
-            BufferedWriter writer = new BufferedWriter(new FileWriter("run.py"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(runTarget));
             String str;
             while ((str = reader.readLine()) != null) {
                 writer.write(str);
