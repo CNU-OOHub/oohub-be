@@ -19,7 +19,6 @@ import org.springframework.web.filter.CorsFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final CorsFilter corsFilter;
     private final JwtSecurityConfig jwtSecurityConfig;
 
@@ -36,7 +35,7 @@ public class SecurityConfig {
                 .antMatchers("/api/hello").permitAll()
                 .antMatchers("/api/v1/login").permitAll()
                 .antMatchers("/api/v1/join").permitAll()
-                .antMatchers("/api/v1/**").permitAll()
+                .antMatchers("/run/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
