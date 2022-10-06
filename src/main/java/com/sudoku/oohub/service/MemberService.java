@@ -7,6 +7,7 @@ import com.sudoku.oohub.domain.Role;
 import com.sudoku.oohub.dto.request.CreateMemberDto;
 import com.sudoku.oohub.dto.response.MemberDto;
 import com.sudoku.oohub.exception.DuplicateMemberException;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.DepartmentRepository;
 import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class MemberService {
                 .password(bCryptPasswordEncoder.encode(createMemberDto.getPassword()))
                 .workspaceName(createMemberDto.getWorkspaceName())
                 .department(departmentRepository.findByName(createMemberDto.getDepartmentName())
-                        .orElseThrow(() -> new RuntimeException("Could not find Department by "+ createMemberDto.getDepartmentName())))
+                        .orElseThrow(() -> new NameNotFoundException("부서명: "+createMemberDto.getDepartmentName()+" 이 존재하지 않습니다." )))
                 .role(Role.ROLE_USER)
                 .build();
 
@@ -49,6 +50,6 @@ public class MemberService {
     public MemberDto findByUsername(String username) {
         return memberRepository.findByUsername(username)
                 .map(converter::convertMemberDto)
-                .orElseThrow(()->new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+                .orElseThrow(()->new NameNotFoundException("username: "+ username + "을 가진 유저가 존재하지 않습니다."));
     }
 }

@@ -3,7 +3,7 @@ package com.sudoku.oohub.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.sudoku.oohub.domain.Member;
-import com.sudoku.oohub.exception.UsernameNotFoundException;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
         // 서명이 정상적으로 됨 -> 인증이 되었으므로 authentication 객체 만듦
         if (username != null) {
             Member memberEntity
-                    = memberRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
+                    = memberRepository.findByUsername(username).orElseThrow(() -> new NameNotFoundException("사용자 정보를 찾을 수 없습니다."));
 
             CustomUserDetails principalDetails = new CustomUserDetails(memberEntity);
             // jwt 토큰 서명이 정상이면 Authentication 객체 만듦

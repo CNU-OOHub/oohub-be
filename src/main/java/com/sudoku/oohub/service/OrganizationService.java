@@ -4,6 +4,7 @@ import com.sudoku.oohub.converter.Converter;
 import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.dto.request.CreateOrganizationDto;
 import com.sudoku.oohub.dto.response.OrganizationDto;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class OrganizationService {
     public OrganizationDto findByOrganizationName(String organizationName) {
         return organizationRepository.findByName(organizationName)
                 .map(converter::convertOrganizationDto)
-                .orElseThrow(() -> new RuntimeException("Could not find organization by "+organizationName));
+                .orElseThrow(() -> new NameNotFoundException(organizationName+"이란 그룹이 존재하지 않습니다."));
     }
 
     public Organization save(CreateOrganizationDto organizationDto){
@@ -39,8 +40,9 @@ public class OrganizationService {
     }
 
     public String delete(String organizationName) {
-        Optional<Organization> organization = organizationRepository.findByName(organizationName);
-        organizationRepository.delete(organization.get());
+        Organization organization = organizationRepository.findByName(organizationName)
+                .orElseThrow(() -> new NameNotFoundException(organizationName+"이란 그룹이 존재하지 않습니다."));
+        organizationRepository.delete(organization);
         return organizationName;
     }
 }

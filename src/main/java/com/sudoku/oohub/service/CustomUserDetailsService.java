@@ -1,6 +1,7 @@
 package com.sudoku.oohub.service;
 
 import com.sudoku.oohub.domain.Member;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.jwt.CustomUserDetails;
 import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("loadUserByUsername 동작 확인");
         Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+                () -> new NameNotFoundException("username:"+username + " 을 가진 유저가 존재하지 않습니다."));
         return new CustomUserDetails(memberEntity);
     }
 

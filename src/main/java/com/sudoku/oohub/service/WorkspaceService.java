@@ -1,11 +1,14 @@
 package com.sudoku.oohub.service;
 
 import com.sudoku.oohub.dto.request.CreateMemberNameDto;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.naming.NameAlreadyBoundException;
 import java.io.File;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -13,22 +16,19 @@ public class WorkspaceService {
 
     private final MemberRepository memberRepository;
 
-    public String createWorkspace(CreateMemberNameDto createMemberNameDto){
+    public String createWorkspace(CreateMemberNameDto createMemberNameDto) throws IOException{
         String userHomeDir = System.getProperty("user.home");
+        if(memberRepository.findByUsername(createMemberNameDto.getUsername()).isEmpty()){
+            throw new NameNotFoundException("username: "+createMemberNameDto.getUsername()+"을 가진 유저가 존재하지 않습니다.");
+        }
         var workspaceName = memberRepository.findByUsername(createMemberNameDto.getUsername()).get().getWorkspaceName();
-        String path = userHomeDir +"\\"+workspaceName;
+        String path = userHomeDir +"/"+workspaceName;
         File folder = new File(path);
 
         if(!folder.exists()){
-            try{
-                folder.mkdir();
-                return "Workspace has been created successfully!";
-            }
-            catch (Exception e) {
-                throw new RuntimeException("path:"+path+" 에 workspace 생성을 실패했습니다.");
-            }
+            folder.mkdir();
+            return "Workspace has been created successfully!";
         } else{
-            System.out.println("이미 ["+path+"] 에 workspace가 생성되어있습니다.");
             return "workspace already exists!";
        }
     }
