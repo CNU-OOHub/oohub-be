@@ -4,6 +4,7 @@ import com.sudoku.oohub.converter.Converter;
 import com.sudoku.oohub.domain.Department;
 import com.sudoku.oohub.dto.request.CreateDepartmentDto;
 import com.sudoku.oohub.dto.response.DepartmentDto;
+import com.sudoku.oohub.exception.DuplicateDepartmentException;
 import com.sudoku.oohub.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,15 @@ public class DepartmentService {
     private final Converter converter;
 
     public Long save(CreateDepartmentDto departmentDto){
+
+        if(departmentRepository.findByName(departmentDto.getDepartmentName()).orElse(null) != null){
+            throw new DuplicateDepartmentException("이미 존재하는 부서명입니다.");
+        }
+
         Department department = Department.builder()
                 .name(departmentDto.getDepartmentName())
                 .build();
+
         Department savedDepartment = departmentRepository.save(department);
         return savedDepartment.getId();
     }
