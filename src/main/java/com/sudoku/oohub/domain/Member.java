@@ -21,6 +21,8 @@ public class Member {
 
     private String password;
 
+    private String workspaceName;
+
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
