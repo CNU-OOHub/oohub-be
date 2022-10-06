@@ -20,14 +20,14 @@ public class CodeRunnerController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/run/line")
-    public ResponseEntity<RunResultDto> runCode(@RequestBody CommandDto commandDto) throws IOException, InterruptedException {
+    public ResponseEntity<RunResultDto> runOneLine(@RequestBody CommandDto commandDto) throws IOException, InterruptedException {
         RunResultDto result = RunResultDto.from(codeRunnerService.runOneLine(commandDto));
         return ResponseEntity.ok(result);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/run/file")
-    public ResponseEntity<RunResultDto> runCode(@ModelAttribute MultipartFile file) throws IOException, InterruptedException {
+    public ResponseEntity<RunResultDto> runFile(@ModelAttribute MultipartFile file) throws IOException, InterruptedException {
         RunResultDto result = RunResultDto.from(codeRunnerService.runFile(file));
         return ResponseEntity.ok(result);
     }

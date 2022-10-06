@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +24,25 @@ public class SecurityConfig {
     private final JwtSecurityConfig jwtSecurityConfig;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+
+        return (web) -> web
+                .ignoring()
+                .antMatchers(
+                        "/favicon.ico"
+                        ,"/error"
+                        ,"/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**"
+                );
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
@@ -32,12 +52,8 @@ public class SecurityConfig {
                 .httpBasic().disable() // 자체 사용자 인증 x
 
                 .authorizeRequests()
-                .antMatchers("/api/hello").permitAll()
-                .antMatchers("/api/v1/login").permitAll()
-                .antMatchers("/api/v1/join").permitAll()
-                .antMatchers("/run/**").permitAll()
 
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .apply(jwtSecurityConfig);
 

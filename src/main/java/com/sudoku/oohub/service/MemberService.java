@@ -37,6 +37,7 @@ public class MemberService {
         Member member = Member.builder()
                 .username(createMemberDto.getUsername())
                 .password(bCryptPasswordEncoder.encode(createMemberDto.getPassword()))
+                .workspaceName(createMemberDto.getWorkspaceName())
                 .department(departmentRepository.findByName(createMemberDto.getDepartmentName())
                         .orElseThrow(() -> new RuntimeException("Could not find Department by "+ createMemberDto.getDepartmentName())))
                 .role(Role.ROLE_USER)
