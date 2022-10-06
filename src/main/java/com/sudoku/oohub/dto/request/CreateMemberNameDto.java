@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateMemberOrganizationDto {
+public class CreateMemberNameDto {
     String username;
 }
