@@ -6,7 +6,6 @@ import com.sudoku.oohub.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.naming.NameAlreadyBoundException;
 import java.io.File;
 import java.io.IOException;
 
