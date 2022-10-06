@@ -5,6 +5,7 @@ import com.sudoku.oohub.domain.Department;
 import com.sudoku.oohub.dto.request.CreateDepartmentDto;
 import com.sudoku.oohub.dto.response.DepartmentDto;
 import com.sudoku.oohub.exception.DuplicateDepartmentException;
+import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class DepartmentService {
     public DepartmentDto findByName(String departmentName){
         return departmentRepository.findByName(departmentName)
                 .map(converter::convertDepartmentDto)
-                .orElseThrow(() -> new RuntimeException("Could not find department by " + departmentName));
+                .orElseThrow(() -> new NameNotFoundException("부서명:"+departmentName+" 이 존재하지 않습니다."));
     }
 
     public List<DepartmentDto> findAll() {

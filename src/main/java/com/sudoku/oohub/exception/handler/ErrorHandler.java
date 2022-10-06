@@ -1,20 +1,12 @@
 package com.sudoku.oohub.exception.handler;
 
-import com.sudoku.oohub.exception.DuplicateDepartmentException;
-import com.sudoku.oohub.exception.DuplicateMemberException;
-import com.sudoku.oohub.exception.UsernameNotFoundException;
+import com.sudoku.oohub.exception.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ErrorHandler {
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorMessage> invalidIdExceptionHandler(UsernameNotFoundException e){
-        return ResponseEntity.status(e.getStatus())
-                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
-    }
 
     @ExceptionHandler(DuplicateMemberException.class)
     public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(DuplicateMemberException e){
@@ -27,4 +19,17 @@ public class ErrorHandler {
         return ResponseEntity.status(e.getStatus())
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
+
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(IdNotFoundException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
+    @ExceptionHandler(NameNotFoundException.class)
+    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(NameNotFoundException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
 }
