@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -15,19 +17,25 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(DuplicateDepartmentException.class)
-    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(DuplicateDepartmentException e){
+    public ResponseEntity<ErrorMessage> duplicateDepartmentExceptionHandler(DuplicateDepartmentException e){
         return ResponseEntity.status(e.getStatus())
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
     @ExceptionHandler(IdNotFoundException.class)
-    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(IdNotFoundException e) {
+    public ResponseEntity<ErrorMessage> idNotFoundExceptionHandler(IdNotFoundException e) {
         return ResponseEntity.status(e.getStatus())
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
     @ExceptionHandler(NameNotFoundException.class)
-    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(NameNotFoundException e) {
+    public ResponseEntity<ErrorMessage> nameNotFoundExceptionHandler(NameNotFoundException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ErrorMessage> fileExceptionHandler(FileException e) {
         return ResponseEntity.status(e.getStatus())
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
