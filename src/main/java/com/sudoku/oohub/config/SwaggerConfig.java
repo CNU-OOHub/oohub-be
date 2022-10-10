@@ -24,6 +24,8 @@ public class SwaggerConfig {
     @Bean
     public Docket swaggerAPI() {
         return new Docket(DocumentationType.OAS_30)
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(List.of(apiKey()))
                 .useDefaultResponseMessages(true)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.sudoku.oohub"))
@@ -39,20 +41,23 @@ public class SwaggerConfig {
                 .version("1.0")
                 .build();
     }
-    private SecurityContext securityContext() {
+
+    // 인증 방식 설정
+    private SecurityContext securityContext(){
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
                 .build();
     }
 
-    private List<SecurityReference> defaultAuth() {
+    private List<SecurityReference> defaultAuth(){
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
     }
 
-    private ApiKey apiKey() {
-        return new ApiKey("Authorization", "Authorization", "header");
+    // 버튼 클릭 시 입력 값 설정
+    private ApiKey apiKey(){
+        return new ApiKey("Authorization", "Bearer", "header");
     }
 }
