@@ -19,7 +19,7 @@ public class FileController {
     /**
      * 파일 저장 또는 수정
      */
-    @PostMapping("/v1/file")
+    @PostMapping("/v1/files")
     ResponseEntity<String> saveFile(@ModelAttribute SaveFileDto saveFileDto) throws IOException {
         String message = fileService.saveFile(saveFileDto);
         return ResponseEntity.ok(message);
@@ -29,7 +29,7 @@ public class FileController {
      * 파일 내용 조회
      *
      */
-    @GetMapping("/v1/file")
+    @GetMapping("/v1/files")
     ResponseEntity<FileDto> getFile(@RequestBody GetFilePathDto getFilePathDto) throws IOException {
         FileDto fileDto = fileService.getFile(getFilePathDto);
         return ResponseEntity.ok(fileDto);
@@ -38,7 +38,7 @@ public class FileController {
     /**
      * 로컬 파일 전체 조회
      */
-    // TODO
+   
 
 
 }
