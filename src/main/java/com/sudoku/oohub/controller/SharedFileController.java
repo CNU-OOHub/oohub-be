@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class SharedFileController {
     }
 
     @PostMapping("/v1/{organizationName}/sharedFile")
-    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @ModelAttribute CreateSharedFileDto createSharedFileDto) {
+    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @ModelAttribute CreateSharedFileDto createSharedFileDto) throws IOException {
         SharedFileDto sharedFileDto = sharedFileService.saveSharedFile(organizationName, createSharedFileDto);
         return ResponseEntity.ok(sharedFileDto);
     }

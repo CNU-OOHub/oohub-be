@@ -8,6 +8,7 @@ import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
@@ -32,6 +34,7 @@ public class OrganizationService {
                 .orElseThrow(() -> new NameNotFoundException(organizationName+"이란 그룹이 존재하지 않습니다."));
     }
 
+    @Transactional
     public Organization save(CreateOrganizationDto organizationDto){
         Organization organization = Organization.builder()
                 .name(organizationDto.getOrganizationName())

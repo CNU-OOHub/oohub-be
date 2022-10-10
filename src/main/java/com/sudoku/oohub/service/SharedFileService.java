@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,17 +64,26 @@ public class SharedFileService {
         return sharedFileDto;
     }
 
-    public SharedFileDto saveSharedFile(String organizationName, CreateSharedFileDto createSharedFileDto) {
+    @Transactional
+    public SharedFileDto saveSharedFile(String organizationName, CreateSharedFileDto createSharedFileDto) throws IOException {
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(()-> new NameNotFoundException("현재 username을 가져올 수 없습니다."));
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(createSharedFileDto.getMultipartFile().getInputStream(), StandardCharsets.UTF_8));
+        String str;
+        String contents = "";
+        while ((str = reader.readLine()) != null) {
+            contents += str + "\n";
+        }
         SharedFile sharedFile = SharedFile.builder()
                 .filename(createSharedFileDto.getMultipartFile().getName())
                 .filepath(createSharedFileDto.getFilePath())
-                .contents(createSharedFileDto.getMultipartFile().toString())
+                .contents(contents)
                 .member(member)
                 .organization(organization)
                 .build();
