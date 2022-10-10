@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +39,9 @@ public class FileController {
     /**
      * 로컬 파일 전체 조회
      */
-   
-
-
+   @GetMapping("/v1/files/all")
+    ResponseEntity<String> getAllFilePath() {
+       fileService.getAllFilePath();
+       return ResponseEntity.ok("ok");
+   }
 }

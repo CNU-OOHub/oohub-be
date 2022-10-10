@@ -1,0 +1,29 @@
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://oohub-db.ce8cy9niwyu2.ap-northeast-2.rds.amazonaws.com:3306/oohub?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: root
+#    password: Root1234!
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/oohub?serverTimezone=Asia/Seoul
+    username: root
+    password: rlathddl
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQL57Dialect
+
+logging.level:
+  org.hibernate.SQL: debug
+
+jwt:
+  #HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
+  #echo 'hihi-sudoku-oohub-secret-key'|base64
+  secret: aGloaS1zdWRva3Utb29odWItc2VjcmV0LWtleQo=
