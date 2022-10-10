@@ -1,14 +1,8 @@
 package com.sudoku.oohub.converter;
 
 
-import com.sudoku.oohub.domain.Department;
-import com.sudoku.oohub.domain.Member;
-import com.sudoku.oohub.domain.MemberOrganization;
-import com.sudoku.oohub.domain.Organization;
-import com.sudoku.oohub.dto.response.DepartmentDto;
-import com.sudoku.oohub.dto.response.MemberDto;
-import com.sudoku.oohub.dto.response.OrganizationDto;
-import org.aspectj.weaver.ast.Or;
+import com.sudoku.oohub.domain.*;
+import com.sudoku.oohub.dto.response.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -77,4 +71,14 @@ public class Converter {
         return member;
     }
 
+    public SharedFileDto convertSharedFileDto(SharedFile sharedFile) {
+        SharedFileDto sharedFileDto = SharedFileDto.builder()
+                .id(sharedFile.getId())
+                .filename(sharedFile.getFilename())
+                .filepath(sharedFile.getFilepath())
+                .contents(sharedFile.getContents())
+                .writer(sharedFile.getMember().getUsername())
+                .build();
+        return sharedFileDto;
+    }
 }

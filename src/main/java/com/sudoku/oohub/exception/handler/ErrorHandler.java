@@ -32,4 +32,10 @@ public class ErrorHandler {
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ErrorMessage> invalidEmailExceptionHandler(FileNotFoundException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
 }
