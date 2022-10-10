@@ -3,8 +3,6 @@ package com.sudoku.oohub.service;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.FileDto;
-import com.sudoku.oohub.exception.UsernameNotFoundException;
-import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,12 +53,11 @@ public class FileService {
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = userHomeDir + "/" + workspaceName;
 
-        List<String> fileList = Arrays.asList(new File(workspaceDir).listFiles()).stream().map(file -> file.getPath()).collect(Collectors.toList());
+        List<String> allPathList = getAllPathList(workspaceDir);
 
-        fileList.forEach(
+        allPathList.forEach(
                 System.out::println
         );
-
     }
 
 
@@ -94,6 +91,22 @@ public class FileService {
                 Files.delete(Path.of(originalPath));
             }
         }
+    }
+
+    ArrayList<String> pathList = new ArrayList<String>();
+    private List<String> getAllPathList(String path) {
+        File[] files = Objects.requireNonNull(new File(path).listFiles());
+        Arrays.stream(Objects.requireNonNull(new File(path).listFiles())).forEach(
+                file -> {
+                    if (file.isDirectory()) {
+                        getAllPathList(file.getPath());
+                    } else{
+                        pathList.add(file.getPath());
+//                        System.out.println(file.getPath());
+                    }
+                }
+        );
+        return pathList;
     }
 
 }
