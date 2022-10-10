@@ -1,4 +1,4 @@
-package com.sudoku.oohub.service;
+package com.sudoku.oohub.jwt;
 
 import com.sudoku.oohub.domain.Member;
 import com.sudoku.oohub.exception.NameNotFoundException;
