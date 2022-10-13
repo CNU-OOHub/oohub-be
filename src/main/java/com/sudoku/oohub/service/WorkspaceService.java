@@ -1,13 +1,19 @@
 package com.sudoku.oohub.service;
 
+import com.sudoku.oohub.domain.Member;
 import com.sudoku.oohub.dto.request.CreateMemberNameDto;
+import com.sudoku.oohub.dto.response.StorageDto;
 import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
+import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
@@ -32,4 +38,21 @@ public class WorkspaceService {
        }
     }
 
+
+    public StorageDto getStorageCapacity() throws IOException {
+        String username = SecurityUtil.getCurrentUsername()
+                .orElseThrow(()-> new NameNotFoundException("현재 username을 가져올 수 없습니다."));
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
+
+        String userHomeDir = System.getProperty("user.home");
+        Path path = Paths.get(userHomeDir+"/"+member.getWorkspaceName());
+
+        long bytes = Files.walk(path)
+                .filter(p -> p.toFile().isFile())
+                .mapToLong(p -> p.toFile().length())
+                .sum();
+
+        return StorageDto.builder().usage(bytes).build();
+    }
 }
