@@ -1,7 +1,9 @@
 package com.sudoku.oohub.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
+import com.sudoku.oohub.dto.response.DirectoryStructureDto;
 import com.sudoku.oohub.dto.response.FileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 @RequiredArgsConstructor
 public class FileService {
@@ -20,7 +24,9 @@ public class FileService {
     private final String userHomeDir = System.getProperty("user.home");
     private final WorkspaceService workspaceService;
 
-    // 파일 저장, 수정
+    /**
+     * 파일 저장, 수정
+     */
     public String saveFile(@ModelAttribute SaveFileDto saveFileDto) throws IOException {
         String originalPath = userHomeDir + saveFileDto.getOriginalPath();
         String newFilePath = userHomeDir + saveFileDto.getUpdatePath();
@@ -30,7 +36,9 @@ public class FileService {
         return newFilePath;
     }
 
-    // 파일 조회
+    /**
+     * 단일 파일 조회
+     */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
         String filePath = userHomeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
@@ -51,7 +59,7 @@ public class FileService {
     /**
      * 워크 스페이스 파일 전체 조회
      */
-    public void getAllFilePath() {
+    public DirectoryStructureDto getAllFilePath() {
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = userHomeDir + "/" + workspaceName;
 
@@ -79,7 +87,7 @@ public class FileService {
                         }
                     }
                 });
-        System.out.println(hashMap);
+        return DirectoryStructureDto.from(hashMap);
     }
 
 
@@ -90,21 +98,30 @@ public class FileService {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(saveFileDto.getMultipartFile().getInputStream(), StandardCharsets.UTF_8));
 
-            if (!newFile.exists()) { // 파일이 존재하지 않으면
-                newFile.getParentFile().mkdirs();
-                newFile.createNewFile();
+            if (createParentAndFile(newFile)) {
+                writeFile(newFile, reader);
             }
-            BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
-            String str;
-            while ((str = reader.readLine()) != null) {
-                writer.write(str);
-                writer.newLine();
-            }
-            writer.close();
         } catch (IOException e) {
             throw new IOException();
         }
 
+    }
+
+    private boolean createParentAndFile(File newFile) throws IOException {
+        if (!newFile.exists()) { // 파일이 존재하지 않으면
+            return newFile.getParentFile().mkdirs() && newFile.createNewFile();
+        }
+        return true;
+    }
+
+    private void writeFile(File newFile, BufferedReader reader) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
+        String str;
+        while ((str = reader.readLine()) != null) {
+            writer.write(str);
+            writer.newLine();
+        }
+        writer.close();
     }
 
     private void deleteOriginalFile(String originalPath, String newFilePath) throws IOException {
@@ -115,7 +132,7 @@ public class FileService {
         }
     }
 
-    ArrayList<String> pathList = new ArrayList<String>();
+    ArrayList<String> pathList = new ArrayList<>();
 
     private List<String> getAllPathList(String path) {
         File[] files = Objects.requireNonNull(new File(path).listFiles());
