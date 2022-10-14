@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,15 +48,38 @@ public class FileService {
         return FileDto.from(file.getName(), contents);
     }
 
+    /**
+     * 워크 스페이스 파일 전체 조회
+     */
     public void getAllFilePath() {
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = userHomeDir + "/" + workspaceName;
 
         List<String> allPathList = getAllPathList(workspaceDir);
+        Map<String, ArrayList<String>> hashMap = new HashMap();
 
         allPathList.forEach(
-                System.out::println
-        );
+                path -> {
+                    path = path.replace(userHomeDir, "");
+                    String[] folderFiles = path.split("/");
+                    List<String> strings = Arrays.asList(folderFiles);
+                    // 하나의 path 에 대해
+                    for (int i = 1; i < strings.size()-1; i++) {
+                        String key = strings.get(i);
+                        String newValue = strings.get(i+1);
+                        if (hashMap.containsKey(key)){
+                            ArrayList<String> valueList = hashMap.get(key);
+                            if (!valueList.contains(newValue)){
+                                valueList.add(newValue);
+                                hashMap.put(key,valueList);
+                            }
+                        }
+                        else {
+                            hashMap.put(key, new ArrayList<>(List.of(strings.get(i + 1))));
+                        }
+                    }
+                });
+        System.out.println(hashMap);
     }
 
 
@@ -94,15 +116,15 @@ public class FileService {
     }
 
     ArrayList<String> pathList = new ArrayList<String>();
+
     private List<String> getAllPathList(String path) {
         File[] files = Objects.requireNonNull(new File(path).listFiles());
         Arrays.stream(Objects.requireNonNull(new File(path).listFiles())).forEach(
                 file -> {
                     if (file.isDirectory()) {
                         getAllPathList(file.getPath());
-                    } else{
+                    } else {
                         pathList.add(file.getPath());
-//                        System.out.println(file.getPath());
                     }
                 }
         );
