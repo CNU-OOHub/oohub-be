@@ -4,6 +4,7 @@ import com.sudoku.oohub.domain.Member;
 import com.sudoku.oohub.dto.request.CreateMemberNameDto;
 import com.sudoku.oohub.dto.response.StorageDto;
 import com.sudoku.oohub.exception.NameNotFoundException;
+import com.sudoku.oohub.exception.UsernameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
 import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,23 +22,32 @@ public class WorkspaceService {
 
     private final MemberRepository memberRepository;
 
-    public String createWorkspace(CreateMemberNameDto createMemberNameDto) throws IOException{
+    public String createWorkspace(CreateMemberNameDto createMemberNameDto) throws IOException {
         String userHomeDir = System.getProperty("user.home");
-        if(memberRepository.findByUsername(createMemberNameDto.getUsername()).isEmpty()){
-            throw new NameNotFoundException("username: "+createMemberNameDto.getUsername()+"을 가진 유저가 존재하지 않습니다.");
+        if (memberRepository.findByUsername(createMemberNameDto.getUsername()).isEmpty()) {
+            throw new NameNotFoundException("username: " + createMemberNameDto.getUsername() + "을 가진 유저가 존재하지 않습니다.");
         }
         var workspaceName = memberRepository.findByUsername(createMemberNameDto.getUsername()).get().getWorkspaceName();
-        String path = userHomeDir +"/"+workspaceName;
+        String path = userHomeDir + "/" + workspaceName;
         File folder = new File(path);
 
-        if(!folder.exists()){
+        if (!folder.exists()) {
             folder.mkdir();
             return "Workspace has been created successfully!";
-        } else{
+        } else {
             return "workspace already exists!";
-       }
+        }
     }
 
+    public String getMyWorkspace() {
+        String username = SecurityUtil.getCurrentUsername().orElseThrow(
+                () -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
+        Member member = memberRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        return member.getWorkspaceName();
+
+    }
 
     public StorageDto getStorageCapacity() throws IOException {
         String username = SecurityUtil.getCurrentUsername()

@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### OOhub ###
-src/main/resources/application.yml
+src/main/resources/application.yml.DS_Store
