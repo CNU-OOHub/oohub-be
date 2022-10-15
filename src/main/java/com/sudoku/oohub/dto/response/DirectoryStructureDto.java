@@ -14,7 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DirectoryStructureDto {
-    private Map<String, ArrayList<String>>  mapResult;
+    private Map<String, ArrayList<String>>  directory;
 
     public static DirectoryStructureDto from(Map<String, ArrayList<String>> mapResult){
         return new DirectoryStructureDto(mapResult);

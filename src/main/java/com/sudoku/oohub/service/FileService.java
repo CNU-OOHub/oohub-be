@@ -72,17 +72,16 @@ public class FileService {
                     String[] folderFiles = path.split("/");
                     List<String> strings = Arrays.asList(folderFiles);
                     // 하나의 path 에 대해
-                    for (int i = 1; i < strings.size()-1; i++) {
-                        String key = strings.get(i);
-                        String newValue = strings.get(i+1);
-                        if (hashMap.containsKey(key)){
+                    for (int i = 1; i < strings.size() - 1; i++) {
+                        String key = String.join("/",strings.subList(1,i+1));
+                        String newValue = strings.get(i + 1);
+                        if (hashMap.containsKey(key)) {
                             ArrayList<String> valueList = hashMap.get(key);
-                            if (!valueList.contains(newValue)){
+                            if (!valueList.contains(newValue)) {
                                 valueList.add(newValue);
-                                hashMap.put(key,valueList);
+                                hashMap.put(key, valueList);
                             }
-                        }
-                        else {
+                        } else {
                             hashMap.put(key, new ArrayList<>(List.of(strings.get(i + 1))));
                         }
                     }
