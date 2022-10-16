@@ -2,18 +2,18 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/oohub?serverTimezone=Asia/Seoul
-    username: root
-    password: rlathddl
+    username: sudoku
+    password: sudoku
 
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        #        show_sql: true
+        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
-        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 logging.level:
   org.hibernate.SQL: debug
