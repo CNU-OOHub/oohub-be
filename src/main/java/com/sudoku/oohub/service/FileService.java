@@ -110,7 +110,8 @@ public class FileService {
 
     private boolean createParentAndFile(File newFile) throws IOException {
         if (!newFile.exists()) { // 파일이 존재하지 않으면
-            return newFile.getParentFile().mkdirs() && newFile.createNewFile();
+            newFile.getParentFile().mkdirs();
+            newFile.createNewFile();
         }
         return true;
     }
@@ -118,6 +119,7 @@ public class FileService {
     private void writeFile(File newFile, BufferedReader reader) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
         String str;
+        System.out.println("파일 새로 쓰는 중 ..");
         while ((str = reader.readLine()) != null) {
             writer.write(str);
             writer.newLine();
