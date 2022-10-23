@@ -16,6 +16,12 @@ public class ErrorHandler {
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
+    @ExceptionHandler(DuplicateMemberOrganizationException.class)
+    public ResponseEntity<ErrorMessage> duplicateMemberOrganizationExceptionHandler(DuplicateMemberOrganizationException e){
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
     @ExceptionHandler(DuplicateDepartmentException.class)
     public ResponseEntity<ErrorMessage> duplicateDepartmentExceptionHandler(DuplicateDepartmentException e){
         return ResponseEntity.status(e.getStatus())

@@ -81,4 +81,13 @@ public class Converter {
                 .build();
         return sharedFileDto;
     }
+
+    public OrganizationMemberDto convertOrganizationMemberDto(Object[] object) {
+        OrganizationMemberDto organizationMemberDto = OrganizationMemberDto.builder()
+                .id(((BigInteger)object[0]).longValue())
+                .username(object[1].toString())
+                .department(object[2].toString())
+                .build();
+        return organizationMemberDto;
+    }
 }
