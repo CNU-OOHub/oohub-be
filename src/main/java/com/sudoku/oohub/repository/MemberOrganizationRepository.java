@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,16 @@ public interface MemberOrganizationRepository extends JpaRepository<MemberOrgani
             nativeQuery = true
     )
     List<Object[]> findAllByMemberId(@Param("memberId") Long memberId);
+
+    @Query(value = "select m.member_id as id, m.username as username, d.name as department\n" +
+            "from member m inner join department d on m.department_id = d.department_id\n" +
+            "right join member_organization mg on mg.member_id = m.member_id\n" +
+            "where mg.organization_id = :organizationId",
+            countQuery = "select count(*) from member_organization mg left join member m on mg.member_id = o.member_id where mg.organization_id = :organizationId",
+            nativeQuery = true
+    )
+    List<Object[]> findAllByOrganizationId(@Param("organizationId") Long organizationId);
+
+    Optional<MemberOrganization> findByMemberIdAndOrganizationId(@Param("member_id") Long member_id, @Param("organization_id") Long organization_id);
 
 }

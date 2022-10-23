@@ -6,6 +6,7 @@ import com.sudoku.oohub.domain.MemberOrganization;
 import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.dto.request.CreateOrganizationDto;
 import com.sudoku.oohub.dto.response.OrganizationDto;
+import com.sudoku.oohub.exception.DuplicateMemberOrganizationException;
 import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.exception.UsernameNotFoundException;
 import com.sudoku.oohub.repository.MemberOrganizationRepository;
@@ -53,6 +54,10 @@ public class OrganizationService {
                 .name(organizationDto.getOrganizationName())
                 .build();
         Organization savedOrganization = organizationRepository.save(organization);
+
+        if(memberOrganizationRepository.findByMemberIdAndOrganizationId(member.getId(), organization.getId()).isPresent()){
+            throw new DuplicateMemberOrganizationException("이미 가입된 사용자 입니다.");
+        }
 
         MemberOrganization memberOrganization = MemberOrganization.builder()
                 .member(member)

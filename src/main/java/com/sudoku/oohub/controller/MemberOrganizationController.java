@@ -3,6 +3,7 @@ package com.sudoku.oohub.controller;
 import com.sudoku.oohub.dto.request.CreateMemberNameDto;
 import com.sudoku.oohub.dto.response.MemberOrganizationDto;
 import com.sudoku.oohub.dto.response.OrganizationDto;
+import com.sudoku.oohub.dto.response.OrganizationMemberDto;
 import com.sudoku.oohub.service.MemberOrganizationService;
 import com.sudoku.oohub.service.MemberService;
 import com.sudoku.oohub.service.OrganizationService;
@@ -35,6 +36,12 @@ public class MemberOrganizationController {
                 .build();
         Long id = memberOrganizationService.save(memberOrganizationDto);
         return ResponseEntity.ok(id);
+    }
+
+    @GetMapping("/v1/organization/{organizationName}")
+    public ResponseEntity<List<OrganizationMemberDto>> organizationMembers(@PathVariable String organizationName){
+        List<OrganizationMemberDto> organizationMemberDtos  = memberOrganizationService.findByOrganizationName(organizationName);
+        return ResponseEntity.ok(organizationMemberDtos);
     }
 
 }
