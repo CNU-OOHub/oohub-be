@@ -1,11 +1,17 @@
 package com.sudoku.oohub.service;
 
 import com.sudoku.oohub.converter.Converter;
+import com.sudoku.oohub.domain.Member;
+import com.sudoku.oohub.domain.MemberOrganization;
 import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.dto.request.CreateOrganizationDto;
 import com.sudoku.oohub.dto.response.OrganizationDto;
 import com.sudoku.oohub.exception.NameNotFoundException;
+import com.sudoku.oohub.exception.UsernameNotFoundException;
+import com.sudoku.oohub.repository.MemberOrganizationRepository;
+import com.sudoku.oohub.repository.MemberRepository;
 import com.sudoku.oohub.repository.OrganizationRepository;
+import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +26,8 @@ import java.util.stream.Collectors;
 public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
+    private final MemberOrganizationRepository memberOrganizationRepository;
+    private final MemberRepository memberRepository;
     private final Converter converter;
 
     public List<OrganizationDto> findAll(){
@@ -36,10 +44,22 @@ public class OrganizationService {
 
     @Transactional
     public Organization save(CreateOrganizationDto organizationDto){
+        String username = SecurityUtil.getCurrentUsername().orElseThrow(
+                () -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
+        Member member = memberRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
         Organization organization = Organization.builder()
                 .name(organizationDto.getOrganizationName())
                 .build();
-        return organizationRepository.save(organization);
+        Organization savedOrganization = organizationRepository.save(organization);
+
+        MemberOrganization memberOrganization = MemberOrganization.builder()
+                .member(member)
+                .organization(savedOrganization)
+                .build();
+        memberOrganizationRepository.save(memberOrganization);
+        return savedOrganization;
     }
 
     public String delete(String organizationName) {
