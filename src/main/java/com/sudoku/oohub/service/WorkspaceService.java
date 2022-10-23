@@ -8,6 +8,7 @@ import com.sudoku.oohub.exception.UsernameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
 import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -21,6 +22,9 @@ import java.nio.file.Paths;
 public class WorkspaceService {
 
     private final MemberRepository memberRepository;
+
+    @Value("${local.home}")
+    private String homeDir;
 
     public String createWorkspace(CreateMemberNameDto createMemberNameDto) throws IOException {
         String userHomeDir = System.getProperty("user.home");
@@ -56,7 +60,7 @@ public class WorkspaceService {
                 .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
 
         String userHomeDir = System.getProperty("user.home");
-        Path path = Paths.get(userHomeDir+"/"+member.getWorkspaceName());
+        Path path = Paths.get(homeDir+"/"+member.getWorkspaceName());
 
         long bytes = Files.walk(path)
                 .filter(p -> p.toFile().isFile())
