@@ -12,8 +12,8 @@ import java.util.List;
 @Service
 public class CodeRunnerService {
 
-    private final String pythonPath = "/usr/local/bin/python";
-    private final String runTarget = "src/run.py";
+    private final String pythonPath = "/usr/bin/python3";
+    private final String runTarget = "run.py";
 
     // 한줄 실행
     public List<String> runOneLine(CommandDto commandDto) throws IOException, InterruptedException {

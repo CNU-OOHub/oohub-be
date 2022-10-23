@@ -6,6 +6,7 @@ import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.DirectoryStructureDto;
 import com.sudoku.oohub.dto.response.FileDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -21,15 +22,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class FileService {
 
-    private final String userHomeDir = System.getProperty("user.home");
+    @Value("${local.home}")
+    private String homeDir;
     private final WorkspaceService workspaceService;
 
     /**
      * 파일 저장, 수정
      */
     public String saveFile(@ModelAttribute SaveFileDto saveFileDto) throws IOException {
-        String originalPath = userHomeDir + saveFileDto.getOriginalPath();
-        String newFilePath = userHomeDir + saveFileDto.getUpdatePath();
+        String originalPath = homeDir + saveFileDto.getOriginalPath();
+        String newFilePath = homeDir + saveFileDto.getUpdatePath();
         createFile(saveFileDto, newFilePath);
         deleteOriginalFile(originalPath, newFilePath);
 
@@ -40,7 +42,7 @@ public class FileService {
      * 단일 파일 조회
      */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
-        String filePath = userHomeDir + getFilePathDto.getFilePath();
+        String filePath = homeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
 
         if (!file.exists()) {
@@ -61,14 +63,14 @@ public class FileService {
      */
     public DirectoryStructureDto getAllFilePath() {
         String workspaceName = workspaceService.getMyWorkspace();
-        String workspaceDir = userHomeDir + "/" + workspaceName;
+        String workspaceDir = homeDir + "/" + workspaceName;
 
         List<String> allPathList = getAllPathList(workspaceDir);
         Map<String, ArrayList<String>> hashMap = new HashMap();
 
         allPathList.forEach(
                 path -> {
-                    path = path.replace(userHomeDir, "");
+                    path = path.replace(homeDir, "");
                     String[] folderFiles = path.split("/");
                     List<String> strings = Arrays.asList(folderFiles);
                     // 하나의 path 에 대해

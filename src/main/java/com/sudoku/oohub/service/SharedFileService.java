@@ -13,6 +13,7 @@ import com.sudoku.oohub.repository.OrganizationRepository;
 import com.sudoku.oohub.repository.SharedFileRepository;
 import com.sudoku.oohub.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,9 @@ public class SharedFileService {
     private final MemberRepository memberRepository;
     private final OrganizationRepository organizationRepository;
     private final Converter converter;
+
+    @Value("${local.home}")
+    private String homeDir;
 
     public List<SharedFileDto> findAllByOrganizationName(String organizationName) {
         Organization organization = organizationRepository.findByName(organizationName)
@@ -54,8 +58,7 @@ public class SharedFileService {
         );
 
         if(username.equals(sharedFileDto.getWriter())) {
-            String userHomeDir = System.getProperty("user.home");
-            String path = userHomeDir +"/"+sharedFileDto.getFilepath();
+            String path = homeDir +"/"+sharedFileDto.getFilepath();
             File localFile = new File(path);
             if(!localFile.exists()){
                 throw new FileNotFoundException("공유 파일에 대한 파일 정보(파일명,경로 등)가 변경되었습니다. 공유파일 삭제 후 다시 공유해주세요");

@@ -27,12 +27,11 @@ public class WorkspaceService {
     private String homeDir;
 
     public String createWorkspace(CreateMemberNameDto createMemberNameDto) throws IOException {
-        String userHomeDir = System.getProperty("user.home");
         if (memberRepository.findByUsername(createMemberNameDto.getUsername()).isEmpty()) {
             throw new NameNotFoundException("username: " + createMemberNameDto.getUsername() + "을 가진 유저가 존재하지 않습니다.");
         }
         var workspaceName = memberRepository.findByUsername(createMemberNameDto.getUsername()).get().getWorkspaceName();
-        String path = userHomeDir + "/" + workspaceName;
+        String path = homeDir + "/" + workspaceName;
         File folder = new File(path);
 
         if (!folder.exists()) {
@@ -59,7 +58,6 @@ public class WorkspaceService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
 
-        String userHomeDir = System.getProperty("user.home");
         Path path = Paths.get(homeDir+"/"+member.getWorkspaceName());
 
         long bytes = Files.walk(path)

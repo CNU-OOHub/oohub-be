@@ -2,6 +2,7 @@ package com.sudoku.oohub.service;
 
 import com.sudoku.oohub.dto.request.FolderDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -11,10 +12,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class FolderService {
 
-    private final String userHomeDir = System.getProperty("user.home");
+    @Value("${local.home}")
+    private String homeDir;
 
     public String createFolder(FolderDto folderDto) throws IOException {
-        String path = userHomeDir +"/"+folderDto.getFolderPath();
+        String path = homeDir +"/"+folderDto.getFolderPath();
         File folder = new File(path);
 
         if(!folder.exists()){
@@ -26,7 +28,7 @@ public class FolderService {
     }
 
     public String deleteFolder(String folderName, FolderDto folderDto) throws IOException{
-        String path = userHomeDir +"/"+folderDto.getFolderPath();
+        String path = homeDir +"/"+folderDto.getFolderPath();
         File folder = new File(path);
 
         while (folder.exists()){
