@@ -1,7 +1,9 @@
 package com.sudoku.oohub.controller;
 
+import com.sudoku.oohub.domain.Role;
 import com.sudoku.oohub.dto.request.CreateMemberDto;
 import com.sudoku.oohub.dto.request.LoginDto;
+import com.sudoku.oohub.dto.response.MemberDto;
 import com.sudoku.oohub.dto.response.TokenDto;
 import com.sudoku.oohub.jwt.JwtProperties;
 import com.sudoku.oohub.jwt.TokenProvider;
@@ -44,11 +46,14 @@ public class MemberController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.createToken(authentication);
+        MemberDto memberDto = memberService.findByUsername(loginDto.getUsername());
+
         HttpHeaders httpHeaders = new HttpHeaders();
 
         httpHeaders.add(JwtProperties.HEADER_STRING,  JwtProperties.TOKEN_PREFIX + jwt);
-
-        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+        TokenDto tokenDto = TokenDto.from(
+                        jwt, memberDto.getUsername(), memberDto.getDepartmentDto().getName(), memberDto.getRole() == Role.ROLE_ADMIN);
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping("/v1/users")
