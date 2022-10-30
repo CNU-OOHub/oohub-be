@@ -1,6 +1,7 @@
 package com.sudoku.oohub.service;
 
 import com.sudoku.oohub.dto.request.CommandDto;
+import com.sudoku.oohub.dto.request.ContentDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,16 +35,21 @@ public class CodeRunnerService {
     }
 
     // 파일 실행
-    public List<String> runFile(MultipartFile file) throws IOException, InterruptedException {
+    public List<String> runFile(ContentDto contentDto) throws IOException, InterruptedException {
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
+            List<String> contents = contentDto.getContents();
             BufferedWriter writer = new BufferedWriter(new FileWriter(runTarget));
-            String str;
-            while ((str = reader.readLine()) != null) {
-                writer.write(str);
-                writer.newLine();
-            }
+            contents.forEach(
+                    content -> {
+                        try {
+                            writer.write(content);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
             writer.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());

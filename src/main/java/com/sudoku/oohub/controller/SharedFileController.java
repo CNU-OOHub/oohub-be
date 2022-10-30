@@ -1,5 +1,6 @@
 package com.sudoku.oohub.controller;
 
+import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
 import com.sudoku.oohub.service.SharedFileService;
@@ -30,7 +31,7 @@ public class SharedFileController {
     }
 
     @PostMapping("/v1/{organizationName}/sharedFile")
-    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @ModelAttribute CreateSharedFileDto createSharedFileDto) throws IOException {
+    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @RequestBody CreateSharedFileDto createSharedFileDto) throws IOException {
         SharedFileDto sharedFileDto = sharedFileService.saveSharedFile(organizationName, createSharedFileDto);
         return ResponseEntity.ok(sharedFileDto);
     }
