@@ -45,25 +45,25 @@ public class OrganizationService {
 
     @Transactional
     public Organization save(CreateOrganizationDto organizationDto){
-        String username = SecurityUtil.getCurrentUsername().orElseThrow(
-                () -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
-        Member member = memberRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+//        String username = SecurityUtil.getCurrentUsername().orElseThrow(
+//                () -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
+//        Member member = memberRepository.findByUsername(username).orElseThrow(
+//                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         Organization organization = Organization.builder()
                 .name(organizationDto.getOrganizationName())
                 .build();
         Organization savedOrganization = organizationRepository.save(organization);
 
-        if(memberOrganizationRepository.findByMemberIdAndOrganizationId(member.getId(), organization.getId()).isPresent()){
-            throw new DuplicateMemberOrganizationException("이미 가입된 사용자 입니다.");
-        }
-
-        MemberOrganization memberOrganization = MemberOrganization.builder()
-                .member(member)
-                .organization(savedOrganization)
-                .build();
-        memberOrganizationRepository.save(memberOrganization);
+//        if(memberOrganizationRepository.findByMemberIdAndOrganizationId(member.getId(), organization.getId()).isPresent()){
+//            throw new DuplicateMemberOrganizationException("이미 가입된 사용자 입니다.");
+//        }
+//
+//        MemberOrganization memberOrganization = MemberOrganization.builder()
+//                .member(member)
+//                .organization(savedOrganization)
+//                .build();
+//        memberOrganizationRepository.save(memberOrganization);
         return savedOrganization;
     }
 
