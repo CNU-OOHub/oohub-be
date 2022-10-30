@@ -58,4 +58,12 @@ public class MemberOrganizationService {
         return repository.findAllByOrganizationId(organization.getId())
                 .stream().map(converter::convertOrganizationMemberDto).collect(Collectors.toList());
     }
+
+    public void deleteMember(String organizationName, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(()-> new NameNotFoundException("username: "+username+"을 가진 유저가 존재하지 않습니다."));
+        Organization organization =organizationRepository.findByName(organizationName)
+                .orElseThrow(() -> new NameNotFoundException("organization name"+ organizationName + "의 organization이 존재하지 않습니다."));
+        repository.deleteByMemberIdAndOrganizationId(member.getId(), organization.getId());
+    }
 }

@@ -1,5 +1,6 @@
 package com.sudoku.oohub.repository;
 
+import com.sudoku.oohub.domain.Member;
 import com.sudoku.oohub.domain.MemberOrganization;
 import com.sudoku.oohub.domain.Organization;
 import org.aspectj.weaver.ast.Or;
@@ -30,4 +31,5 @@ public interface MemberOrganizationRepository extends JpaRepository<MemberOrgani
 
     Optional<MemberOrganization> findByMemberIdAndOrganizationId(@Param("member_id") Long member_id, @Param("organization_id") Long organization_id);
 
+    void deleteByMemberIdAndOrganizationId(@Param("member_id") Long memberId, @Param("organization_id") Long organizationId);
 }

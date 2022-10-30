@@ -8,6 +8,7 @@ import com.sudoku.oohub.service.MemberOrganizationService;
 import com.sudoku.oohub.service.MemberService;
 import com.sudoku.oohub.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,12 @@ public class MemberOrganizationController {
     public ResponseEntity<List<OrganizationMemberDto>> organizationMembers(@PathVariable String organizationName){
         List<OrganizationMemberDto> organizationMemberDtos  = memberOrganizationService.findByOrganizationName(organizationName);
         return ResponseEntity.ok(organizationMemberDtos);
+    }
+
+    @DeleteMapping("/v1/organization/{organizationName}/{username}")
+    public ResponseEntity<String> deleteOrganizationMember(@PathVariable String organizationName, @PathVariable String username){
+        memberOrganizationService.deleteMember(organizationName, username);
+        return ResponseEntity.ok(username);
     }
 
 }
