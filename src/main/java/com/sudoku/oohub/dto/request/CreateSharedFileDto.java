@@ -13,5 +13,5 @@ import java.util.List;
 public class CreateSharedFileDto {
     private String filePath;
     private String name;
-    private List<String> contents;
+    private String contents;
 }

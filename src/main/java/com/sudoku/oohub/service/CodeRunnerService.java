@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.sudoku.oohub.util.CommandUtil.executeProcess;
@@ -38,7 +39,7 @@ public class CodeRunnerService {
     public List<String> runFile(ContentDto contentDto) throws IOException, InterruptedException {
 
         try {
-            List<String> contents = contentDto.getContents();
+            List<String> contents = Arrays.asList(contentDto.getContents().split("/n"));
             BufferedWriter writer = new BufferedWriter(new FileWriter(runTarget));
             contents.forEach(
                     content -> {

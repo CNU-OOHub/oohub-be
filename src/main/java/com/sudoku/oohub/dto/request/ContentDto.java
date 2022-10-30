@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class ContentDto {
-    private List<String> contents;
+    private String contents;
 }

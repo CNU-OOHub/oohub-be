@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,7 @@ public class SharedFileService {
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
-        List<String> contentList = createSharedFileDto.getContents();
+        List<String> contentList = Arrays.asList(createSharedFileDto.getContents().split("/n"));
         StringBuilder contents = new StringBuilder();
         for(String str : contentList){
             contents.append(str).append("\n");
