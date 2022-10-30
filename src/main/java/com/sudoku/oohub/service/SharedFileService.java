@@ -4,6 +4,7 @@ import com.sudoku.oohub.converter.Converter;
 import com.sudoku.oohub.domain.Member;
 import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.domain.SharedFile;
+import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
 import com.sudoku.oohub.exception.FileNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,20 +78,20 @@ public class SharedFileService {
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(createSharedFileDto.getMultipartFile().getInputStream(), StandardCharsets.UTF_8));
-        String str;
-        String contents = "";
-        while ((str = reader.readLine()) != null) {
-            contents += str + "\n";
+        List<String> contentList = Arrays.asList(createSharedFileDto.getContents().split("/n"));
+        StringBuilder contents = new StringBuilder();
+        for(String str : contentList){
+            contents.append(str).append("\n");
         }
+
         SharedFile sharedFile = SharedFile.builder()
-                .filename(createSharedFileDto.getMultipartFile().getName())
+                .filename(createSharedFileDto.getName())
                 .filepath(createSharedFileDto.getFilePath())
-                .contents(contents)
+                .contents(contents.toString())
                 .member(member)
                 .organization(organization)
                 .build();
+
         SharedFileDto savedFile = converter.convertSharedFileDto(sharedFileRepository.save(sharedFile));
         return savedFile;
 

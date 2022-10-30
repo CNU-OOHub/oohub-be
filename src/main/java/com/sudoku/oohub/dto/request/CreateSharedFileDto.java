@@ -3,6 +3,8 @@ package com.sudoku.oohub.dto.request;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -10,5 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class CreateSharedFileDto {
     private String filePath;
-    private MultipartFile multipartFile;
+    private String name;
+    private String contents;
 }
