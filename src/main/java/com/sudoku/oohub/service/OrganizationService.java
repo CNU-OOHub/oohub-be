@@ -7,6 +7,7 @@ import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.dto.request.CreateOrganizationDto;
 import com.sudoku.oohub.dto.response.OrganizationDto;
 import com.sudoku.oohub.exception.DuplicateMemberOrganizationException;
+import com.sudoku.oohub.exception.DuplicateOrganizationException;
 import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.exception.UsernameNotFoundException;
 import com.sudoku.oohub.repository.MemberOrganizationRepository;
@@ -49,7 +50,9 @@ public class OrganizationService {
 //                () -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
 //        Member member = memberRepository.findByUsername(username).orElseThrow(
 //                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
+        if(organizationRepository.findByName(organizationDto.getOrganizationName()).isPresent()){
+            throw new DuplicateOrganizationException("이미 존재하는 그룹명입니다.");
+        }
         Organization organization = Organization.builder()
                 .name(organizationDto.getOrganizationName())
                 .build();
