@@ -1,10 +1,12 @@
 package com.sudoku.oohub.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sudoku.oohub.domain.SharedFile;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.DirectoryStructureDto;
 import com.sudoku.oohub.dto.response.FileDto;
+import com.sudoku.oohub.repository.SharedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 @RequiredArgsConstructor
 public class FileService {
+
+    private final SharedFileRepository sharedFileRepository;
 
     @Value("${local.home}")
     private String homeDir;
@@ -42,6 +46,7 @@ public class FileService {
      * 단일 파일 조회
      */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
+
         String filePath = homeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
 
@@ -55,7 +60,11 @@ public class FileService {
             contents.add(str);
         }
 
-        return FileDto.from(file.getName(), contents);
+        return FileDto.from(file.getName(), contents,isSharedFile(getFilePathDto));
+    }
+
+    private boolean isSharedFile(GetFilePathDto getFilePathDto) {
+        return sharedFileRepository.findByFilepath(getFilePathDto.getFilePath()).isPresent();
     }
 
     /**
