@@ -16,6 +16,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +74,10 @@ public class FileService {
     public DirectoryStructureDto getAllFilePath() {
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = homeDir + "/" + workspaceName;
+
+        if (!new File(workspaceDir).exists()){
+            return DirectoryStructureDto.from(Map.of());
+        }
 
         List<String> allPathList = getAllPathList(workspaceDir);
         Map<String, ArrayList<String>> hashMap = new HashMap();
@@ -147,8 +152,8 @@ public class FileService {
     ArrayList<String> pathList = new ArrayList<>();
 
     private List<String> getAllPathList(String path) {
-        File[] files = Objects.requireNonNull(new File(path).listFiles());
-        Arrays.stream(Objects.requireNonNull(new File(path).listFiles())).forEach(
+        File[] files = new File(path).listFiles();
+        Arrays.stream(Objects.requireNonNull(files)).forEach(
                 file -> {
                     if (file.isDirectory()) {
                         getAllPathList(file.getPath());
