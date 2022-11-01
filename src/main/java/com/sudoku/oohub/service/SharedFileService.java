@@ -43,8 +43,9 @@ public class SharedFileService {
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
         List<SharedFileDto> sharedFiles = sharedFileRepository.findByOrganizationId(organization.getId())
+                .stream()
                 .map((sharedFile) -> converter.convertSharedFileDto(sharedFile))
-                .stream().collect(Collectors.toList());
+                .collect(Collectors.toList());
         return sharedFiles;
     }
 
