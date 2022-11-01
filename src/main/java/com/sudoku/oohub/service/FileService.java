@@ -171,10 +171,8 @@ public class FileService {
     }
 
     public JsonObject getFileStructure() {
-        String tempHome = "C:/Users/MIRAE";
-
         String workspaceName = workspaceService.getMyWorkspace();
-        String workspaceDir = tempHome + "/" + workspaceName;
+        String workspaceDir = homeDir + "/" + workspaceName;
 
         JsonObject structure = makeJsonStructure(workspaceDir);
 
