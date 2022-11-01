@@ -70,10 +70,11 @@ public class OrganizationService {
         return savedOrganization;
     }
 
+    @Transactional
     public String delete(String organizationName) {
         Organization organization = organizationRepository.findByName(organizationName)
-                .orElseThrow(() -> new NameNotFoundException(organizationName+"이란 그룹이 존재하지 않습니다."));
-        organizationRepository.delete(organization);
+                .orElseThrow(() -> new NameNotFoundException(organizationName + "이란 그룹이 존재하지 않습니다."));
+        organizationRepository.deleteById(organization.getId());
         return organizationName;
     }
 }
