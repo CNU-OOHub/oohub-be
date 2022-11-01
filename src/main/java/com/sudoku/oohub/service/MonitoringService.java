@@ -21,8 +21,8 @@ public class MonitoringService {
                 new ProcessBuilder("/bin/bash", "-c", "free -h"));
 
         String[] split = ramUsage.get(1).substring(15).split(" {7}");
-        String ramTotal = split[0].substring(0, split[0].length() - 2);
-        String ramUsed = split[1].substring(0, split[0].length() - 2);
+        String ramTotal = split[0].substring(0, split[0].length());
+        String ramUsed = split[1].substring(0, split[0].length());
         return ResourceUsageDto.from(cpuUsage.get(0), ramTotal, ramUsed);
     }
 }

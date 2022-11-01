@@ -12,8 +12,9 @@ import java.util.List;
 public class FileDto {
     private String fileName;
     private List<String> contents;
+    private Boolean isShared;
 
-    public static FileDto from(String fileName, List<String> contents){
-        return new FileDto(fileName, contents);
+    public static FileDto from(String fileName, List<String> contents, Boolean isShared){
+        return new FileDto(fileName, contents,isShared);
     }
 }

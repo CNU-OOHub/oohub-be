@@ -3,10 +3,12 @@ package com.sudoku.oohub.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.sudoku.oohub.domain.SharedFile;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.DirectoryStructureDto;
 import com.sudoku.oohub.dto.response.FileDto;
+import com.sudoku.oohub.repository.SharedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,8 @@ import springfox.documentation.spring.web.json.Json;
 @Service
 @RequiredArgsConstructor
 public class FileService {
+
+    private final SharedFileRepository sharedFileRepository;
 
     @Value("${local.home}")
     private String homeDir;
@@ -46,6 +51,7 @@ public class FileService {
      * 단일 파일 조회
      */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
+
         String filePath = homeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
 
@@ -59,7 +65,11 @@ public class FileService {
             contents.add(str);
         }
 
-        return FileDto.from(file.getName(), contents);
+        return FileDto.from(file.getName(), contents,isSharedFile(getFilePathDto));
+    }
+
+    private boolean isSharedFile(GetFilePathDto getFilePathDto) {
+        return sharedFileRepository.findByFilepath(getFilePathDto.getFilePath()).isPresent();
     }
 
     /**
@@ -69,6 +79,10 @@ public class FileService {
         String tempHome = "C:/Users/MIRAE";
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = tempHome + "/" + workspaceName;
+
+        if (!new File(workspaceDir).exists()){
+            return DirectoryStructureDto.from(Map.of());
+        }
 
         List<String> allPathList = getAllPathList(workspaceDir);
         Map<String, ArrayList<String>> hashMap = new HashMap();
@@ -143,8 +157,8 @@ public class FileService {
     ArrayList<String> pathList = new ArrayList<>();
 
     private List<String> getAllPathList(String path) {
-        File[] files = Objects.requireNonNull(new File(path).listFiles());
-        Arrays.stream(Objects.requireNonNull(new File(path).listFiles())).forEach(
+        File[] files = new File(path).listFiles();
+        Arrays.stream(Objects.requireNonNull(files)).forEach(
                 file -> {
                     if (file.isDirectory()) {
                         getAllPathList(file.getPath());
