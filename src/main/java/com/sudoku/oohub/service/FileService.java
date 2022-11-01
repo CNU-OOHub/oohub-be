@@ -1,6 +1,8 @@
 package com.sudoku.oohub.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.DirectoryStructureDto;
@@ -15,8 +17,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import springfox.documentation.spring.web.json.Json;
 
 @Service
 @RequiredArgsConstructor
@@ -62,8 +66,9 @@ public class FileService {
      * 워크 스페이스 파일 전체 조회
      */
     public DirectoryStructureDto getAllFilePath() {
+        String tempHome = "C:/Users/MIRAE";
         String workspaceName = workspaceService.getMyWorkspace();
-        String workspaceDir = homeDir + "/" + workspaceName;
+        String workspaceDir = tempHome + "/" + workspaceName;
 
         List<String> allPathList = getAllPathList(workspaceDir);
         Map<String, ArrayList<String>> hashMap = new HashMap();
@@ -151,4 +156,39 @@ public class FileService {
         return pathList;
     }
 
+    public JsonObject getFileStructure() {
+        String tempHome = "C:/Users/MIRAE";
+
+        String workspaceName = workspaceService.getMyWorkspace();
+        String workspaceDir = tempHome + "/" + workspaceName;
+
+        JsonObject structure = makeJsonStructure(workspaceDir);
+
+        return structure;
+    }
+
+    public JsonObject makeJsonStructure(String path){
+        File root = new File(path);
+
+        JsonObject parent = new JsonObject();
+        parent.addProperty("name", root.getName());
+        System.out.println(root.getName());
+        System.out.println(root.getPath());
+        File[] files = Objects.requireNonNull(root.listFiles());
+        JsonArray children = new JsonArray();
+        Arrays.stream(files).forEach(
+                file -> {
+                    if (file.isDirectory()) {
+                        var childrenFolder = makeJsonStructure(file.getPath());
+                        children.add(childrenFolder);
+                    } else {
+                        JsonObject childrenFile = new JsonObject();
+                        childrenFile.addProperty("name", file.getName());
+                        children.add(childrenFile);
+                    }
+                }
+        );
+        parent.add("children", children);
+        return parent;
+    }
 }
