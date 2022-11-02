@@ -32,7 +32,7 @@ public class FileController {
      * 파일 내용 조회
      *
      */
-    @GetMapping("/v1/files")
+    @PostMapping("/v1/files/info")
     ResponseEntity<FileDto> getFile(@RequestBody GetFilePathDto getFilePathDto) throws IOException {
         FileDto fileDto = fileService.getFile(getFilePathDto);
         return ResponseEntity.ok(fileDto);
