@@ -1,13 +1,14 @@
 package com.sudoku.oohub.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.sudoku.oohub.domain.SharedFile;
+import com.sudoku.oohub.exception.FileNotFoundException;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.request.SaveFileDto;
 import com.sudoku.oohub.dto.response.DirectoryStructureDto;
 import com.sudoku.oohub.dto.response.FileDto;
+import com.sudoku.oohub.repository.OrganizationRepository;
 import com.sudoku.oohub.repository.SharedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,7 @@ import springfox.documentation.spring.web.json.Json;
 public class FileService {
 
     private final SharedFileRepository sharedFileRepository;
+    private final OrganizationRepository organizationRepository;
 
     @Value("${local.home}")
     private String homeDir;
@@ -51,7 +52,6 @@ public class FileService {
      * 단일 파일 조회
      */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
-
         String filePath = homeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
 
@@ -65,20 +65,27 @@ public class FileService {
             contents.add(str);
         }
 
-        return FileDto.from(file.getName(), contents,isSharedFile(getFilePathDto));
+        return FileDto.from(file.getName(), contents,isSharedFile(getFilePathDto), getOrganizationName(getFilePathDto));
     }
 
     private boolean isSharedFile(GetFilePathDto getFilePathDto) {
         return sharedFileRepository.findByFilepath(getFilePathDto.getFilePath()).isPresent();
     }
 
+    private String getOrganizationName(GetFilePathDto getFilePathDto){
+        var sharedFile = sharedFileRepository.findByFilepath(getFilePathDto.getFilePath());
+        if(sharedFile.isEmpty()){
+            return "";
+        }
+        return organizationRepository.findById(sharedFile.get().getOrganization().getId()).get().getName();
+    }
+
     /**
      * 워크 스페이스 파일 전체 조회
      */
     public DirectoryStructureDto getAllFilePath() {
-        String tempHome = "C:/Users/MIRAE";
         String workspaceName = workspaceService.getMyWorkspace();
-        String workspaceDir = tempHome + "/" + workspaceName;
+        String workspaceDir = homeDir + "/" + workspaceName;
 
         if (!new File(workspaceDir).exists()){
             return DirectoryStructureDto.from(Map.of());

@@ -13,8 +13,9 @@ public class FileDto {
     private String fileName;
     private List<String> contents;
     private Boolean isShared;
+    private String organizationName;
 
-    public static FileDto from(String fileName, List<String> contents, Boolean isShared){
-        return new FileDto(fileName, contents,isShared);
+    public static FileDto from(String fileName, List<String> contents, Boolean isShared, String organizationName){
+        return new FileDto(fileName, contents,isShared, organizationName);
     }
 }
