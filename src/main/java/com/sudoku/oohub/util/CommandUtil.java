@@ -33,6 +33,7 @@ public class CommandUtil {
             log.debug("builder command : " + builder.command().toString());
             System.out.println("Process ended...(종료코드) ::: " + exitVal);
             System.out.println("서브 프로세스가 비정상 종료되었습니다.");
+            resultList.add("Compile Error");
         }
 
         return resultList;
