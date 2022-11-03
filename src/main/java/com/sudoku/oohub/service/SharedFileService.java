@@ -6,7 +6,9 @@ import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.domain.SharedFile;
 import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
+import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
+import com.sudoku.oohub.exception.DuplicateFileException;
 import com.sudoku.oohub.exception.FileNotFoundException;
 import com.sudoku.oohub.exception.NameNotFoundException;
 import com.sudoku.oohub.repository.MemberRepository;
@@ -61,7 +63,7 @@ public class SharedFileService {
         );
 
         if(username.equals(sharedFileDto.getWriter())) {
-            String path = homeDir +"/"+sharedFileDto.getFilepath();
+            String path = homeDir +sharedFileDto.getFilepath();
             File localFile = new File(path);
             if(!localFile.exists()){
                 throw new FileNotFoundException("공유 파일에 대한 파일 정보(파일명,경로 등)가 변경되었습니다. 공유파일 삭제 후 다시 공유해주세요");
@@ -78,6 +80,18 @@ public class SharedFileService {
                 .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
+
+        // 로컬 파일 존재 확인
+        String filePath = homeDir + createSharedFileDto.getFilePath();
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            throw new FileNotFoundException("파일이 존재하지 않습니다.");
+        }
+
+        if(sharedFileRepository.findByFilepath(createSharedFileDto.getFilePath()).isPresent()){
+                throw new DuplicateFileException("이미 공유된 파일입니다.");
+        }
 
         List<String> contentList = Arrays.asList(createSharedFileDto.getContents().split("/n"));
         StringBuilder contents = new StringBuilder();

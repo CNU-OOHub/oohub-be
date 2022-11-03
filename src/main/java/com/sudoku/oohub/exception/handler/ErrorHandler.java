@@ -34,6 +34,12 @@ public class ErrorHandler {
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
+    @ExceptionHandler(DuplicateFileException.class)
+    public ResponseEntity<ErrorMessage> duplicateFileExceptionHandler(DuplicateFileException e){
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<ErrorMessage> idNotFoundExceptionHandler(IdNotFoundException e) {
         return ResponseEntity.status(e.getStatus())
