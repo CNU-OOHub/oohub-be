@@ -10,11 +10,19 @@ import lombok.*;
 @NoArgsConstructor
 public class TokenDto {
     private String token;
+    private String refreshToken;
     private String username;
     private String departmentName;
     private Boolean isAdmin;
 
-    public static TokenDto from(String token, String username, String departmentName, Boolean isAdmin){
-        return new TokenDto(token, username, departmentName, isAdmin);
+    public static TokenDto from(
+            String token, String refreshToken, String username, String departmentName, Boolean isAdmin) {
+        return TokenDto.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .username(username)
+                .departmentName(departmentName)
+                .isAdmin(isAdmin)
+                .build();
     }
 }
