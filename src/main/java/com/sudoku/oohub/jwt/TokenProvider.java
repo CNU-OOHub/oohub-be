@@ -5,10 +5,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +20,8 @@ public class TokenProvider {
 
     @Value("${jwt.secret}")
     private String secretKey;
+    @Value("${jwt.refresh}")
+    private String refreshSecretKey;
 
     private CustomUserDetails userDetails;
 
@@ -30,4 +35,26 @@ public class TokenProvider {
                 .withClaim("username", userDetails.getMember().getUsername())
                 .sign(Algorithm.HMAC512(secretKey));
     }
+
+    public String refreshToken(Authentication authentication){
+        userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        return JWT.create()
+                .withSubject(userDetails.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (JwtProperties.REFRESH_EXPIRATION_TIME)))
+                .withClaim("id", userDetails.getMember().getId())
+                .withClaim("username", userDetails.getMember().getUsername())
+                .sign(Algorithm.HMAC512(refreshSecretKey));
+    }
+
+    public String getUsernameIfValidToken(String token) {
+        return JWT.require(Algorithm.HMAC512(secretKey)).build()
+                .verify(token).getClaim("username").asString();
+    }
+
+    public Optional<String> getUsernameIfValidRefreshToken(String token) {
+        return Optional.of(JWT.require(Algorithm.HMAC512(refreshSecretKey)).build()
+                .verify(token).getClaim("username").asString());
+    }
+
 }
