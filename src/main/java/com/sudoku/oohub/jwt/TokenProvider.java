@@ -5,7 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -54,4 +56,5 @@ public class TokenProvider {
         return Optional.of(JWT.require(Algorithm.HMAC512(refreshSecretKey)).build()
                 .verify(token).getClaim("username").asString());
     }
+
 }

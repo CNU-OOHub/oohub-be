@@ -7,6 +7,7 @@ import com.sudoku.oohub.dto.request.CreateMemberDto;
 import com.sudoku.oohub.dto.request.LoginDto;
 import com.sudoku.oohub.dto.response.MemberDto;
 import com.sudoku.oohub.dto.response.TokenDto;
+import com.sudoku.oohub.jwt.CustomUserDetailsService;
 import com.sudoku.oohub.jwt.JwtProperties;
 import com.sudoku.oohub.jwt.TokenProvider;
 import com.sudoku.oohub.service.MemberService;
@@ -19,11 +20,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +36,7 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
+    private final CustomUserDetailsService userDetailsService;
 
     @PostMapping("/v1/join")
     public ResponseEntity<Long> join(@RequestBody @Validated CreateMemberDto createMemberDto) {
@@ -42,7 +47,8 @@ public class MemberController {
     @PostMapping("/v1/login")
     public ResponseEntity<TokenDto> login(@RequestBody @Validated LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+                new UsernamePasswordAuthenticationToken(
+                        loginDto.getUsername(), loginDto.getPassword());
 
         // PrincipalDetailsService의 loadUserByUsername 실행됨 -> 정상이면 authentication 객체 리턴
         // 즉 알아서 인증을 해줌 (= DB에 있는 username, password와 일치한다.)
@@ -65,7 +71,7 @@ public class MemberController {
     @PostMapping("/v1/refresh")
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(JwtProperties.HEADER_STRING_REFRESH);
-        if(authorizationHeader != null && authorizationHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
             String refreshToken = authorizationHeader.substring(JwtProperties.TOKEN_PREFIX.length());
             // refresh token 인증
             String username = tokenProvider.getUsernameIfValidRefreshToken(refreshToken).orElseThrow(
@@ -73,11 +79,10 @@ public class MemberController {
 
             // access token 재발급
             MemberDto memberDto = memberService.findByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(memberDto.getUsername(), memberDto.getPassword());
-
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            String newAccessToken = tokenProvider.createToken(authentication);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Authentication newAuthentication = createNewAuthentication(authentication, username);
+            SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+            String newAccessToken = tokenProvider.createToken(newAuthentication);
 
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + newAccessToken);
@@ -85,7 +90,7 @@ public class MemberController {
                     newAccessToken, refreshToken, memberDto.getUsername(), memberDto.getDepartmentDto().getName(), memberDto.getRole() == Role.ROLE_ADMIN);
 
             return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
-        }else {
+        } else {
             throw new RuntimeException("Refresh token 을 넣어주세요.");
         }
     }
@@ -94,6 +99,13 @@ public class MemberController {
     public ResponseEntity<String> test() {
         String currentUsername = SecurityUtil.getCurrentUsername().orElseGet(null);
         return ResponseEntity.ok(currentUsername);
+    }
+
+    protected Authentication createNewAuthentication(Authentication currentAuth, String username) {
+        UserDetails newPrincipal = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(newPrincipal, currentAuth.getCredentials(), newPrincipal.getAuthorities());
+        newAuth.setDetails(currentAuth.getDetails());
+        return newAuth;
     }
 
 }
