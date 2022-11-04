@@ -78,6 +78,7 @@ public class SharedFileService {
     public SharedFileDto saveSharedFile(String organizationName, CreateSharedFilePathDto filePathDto) throws IOException {
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(()-> new NameNotFoundException("현재 username을 가져올 수 없습니다."));
+        System.out.println(username);
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NameNotFoundException("username: "+username+" 을 가진 유저를 찾을 수 없습니다."));
         Organization organization = organizationRepository.findByName(organizationName)
@@ -97,14 +98,14 @@ public class SharedFileService {
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String str;
-        List<String> contents = new ArrayList<>();
+        StringBuilder contents = new StringBuilder();
         while ((str = reader.readLine()) != null) {
-            contents.add(str);
+            contents.append(str).append("\n");
         }
 
         SharedFile sharedFile = SharedFile.builder()
                 .filename(file.getName())
-                .filepath(file.getPath())
+                .filepath(filePathDto.getFilePath())
                 .contents(contents.toString())
                 .member(member)
                 .organization(organization)
