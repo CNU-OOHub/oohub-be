@@ -39,10 +39,10 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        String jwtHeader = httpServletRequest.getHeader(JwtProperties.HEADER_STRING);
-        logger.debug("jwt header: " + jwtHeader);
+        String accessToken = httpServletRequest.getHeader(JwtProperties.HEADER_STRING);
+        logger.debug("jwt header: " + accessToken);
 
-        if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) {
+        if (accessToken == null || !accessToken.startsWith("Bearer")) {
             chain.doFilter(request, response);
             return;
         }

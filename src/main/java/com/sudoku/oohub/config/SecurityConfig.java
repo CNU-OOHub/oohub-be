@@ -52,7 +52,6 @@ public class SecurityConfig {
                 .httpBasic().disable() // 자체 사용자 인증 x
 
                 .authorizeRequests()
-
                 .anyRequest().permitAll()
                 .and()
                 .apply(jwtSecurityConfig);
@@ -64,6 +63,7 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
