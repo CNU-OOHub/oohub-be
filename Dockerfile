@@ -12,6 +12,18 @@ RUN apt-get install -y openjdk-11-jdk
 RUN apt install python3
 RUN apt install python3-pip -y
 
+# 한글 설정
+RUN apt-get update && apt-get install -y \
+    language-pack-ko \
+    fonts-nanum \
+    fonts-nanum-coding
+
+# 언어 설정
+RUN locale-gen ko_KR.UTF-8
+ENV LANG ko_KR.UTF-8
+ENV LANGUAGE ko_KR.UTF-8
+ENV LC_ALL ko_KR.UTF-8
+
 
 ENV APP_HOME=/app
 

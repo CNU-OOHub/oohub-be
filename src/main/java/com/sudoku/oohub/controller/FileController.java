@@ -49,7 +49,7 @@ public class FileController {
     /**
      * 로컬 파일 전체 조회 - json 형식
      */
-   @GetMapping(value = "/v1/files/all", produces="text/plain;charset=UTF-8")
+   @GetMapping(value = "/v1/files/all", produces="application/json; charset=utf-8")
     ResponseEntity<String> getFileStructure() {
        return ResponseEntity.ok(fileService.getFileStructure().toString());
    }
