@@ -11,5 +11,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class SaveFileDto {
     private String originalPath;
     private String updatePath;
-    private MultipartFile multipartFile;
+    private String contents;
 }

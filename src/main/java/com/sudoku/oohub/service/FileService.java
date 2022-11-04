@@ -124,13 +124,20 @@ public class FileService {
     private void createFile(SaveFileDto saveFileDto, String newFilePath) throws IOException {
         try {
             File newFile = new File(newFilePath);
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(saveFileDto.getMultipartFile().getInputStream(), StandardCharsets.UTF_8));
-
-            if (createParentAndFile(newFile)) {
-                writeFile(newFile, reader);
-            }
+            createParentAndFile(newFile);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
+            System.out.println("파일 새로 쓰는 중 ..");
+            List<String> contents = Arrays.asList(saveFileDto.getContents().split("/n"));
+            contents.forEach(content -> {
+                try {
+                    writer.write(content);
+                    writer.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            writer.close();
+            System.out.println("파일 쓰기 완료");
         } catch (IOException e) {
             throw new IOException();
         }

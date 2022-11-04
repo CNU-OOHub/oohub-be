@@ -23,7 +23,7 @@ public class FileController {
      * 파일 저장 또는 수정
      */
     @PostMapping("/v1/files")
-    ResponseEntity<String> saveFile(@ModelAttribute SaveFileDto saveFileDto) throws IOException {
+    ResponseEntity<String> saveFile(@RequestBody SaveFileDto saveFileDto) throws IOException {
         String message = fileService.saveFile(saveFileDto);
         return ResponseEntity.ok(message);
     }
