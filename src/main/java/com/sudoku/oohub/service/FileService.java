@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +40,7 @@ public class FileService {
     /**
      * 파일 저장, 수정
      */
-    public String saveFile(@ModelAttribute SaveFileDto saveFileDto) throws IOException {
+    public String saveFile(SaveFileDto saveFileDto) throws IOException {
         String originalPath = homeDir + saveFileDto.getOriginalPath();
         String newFilePath = homeDir + saveFileDto.getUpdatePath();
         createFile(saveFileDto, newFilePath);
