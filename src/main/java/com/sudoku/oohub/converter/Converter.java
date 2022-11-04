@@ -6,6 +6,8 @@ import com.sudoku.oohub.dto.response.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class Converter {
@@ -72,11 +74,12 @@ public class Converter {
     }
 
     public SharedFileDto convertSharedFileDto(SharedFile sharedFile) {
+        List<String> contents = List.of(sharedFile.getContents().split("\\n+"));
         SharedFileDto sharedFileDto = SharedFileDto.builder()
                 .id(sharedFile.getId())
                 .filename(sharedFile.getFilename())
                 .filepath(sharedFile.getFilepath())
-                .contents(sharedFile.getContents())
+                .contents(contents)
                 .writer(sharedFile.getMember().getUsername())
                 .build();
         return sharedFileDto;

@@ -2,6 +2,8 @@ package com.sudoku.oohub.dto.response;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -9,7 +11,7 @@ import lombok.*;
 @Builder
 public class SharedFileDto {
     Long id;
-    String contents;
+    List<String> contents;
     String filename;
     String filepath;
     String writer;
