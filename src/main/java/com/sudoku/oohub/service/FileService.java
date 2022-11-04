@@ -11,6 +11,8 @@ import com.sudoku.oohub.dto.response.FileDto;
 import com.sudoku.oohub.repository.OrganizationRepository;
 import com.sudoku.oohub.repository.SharedFileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,13 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import springfox.documentation.spring.web.json.Json;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileService {
 
     private final SharedFileRepository sharedFileRepository;
@@ -52,8 +52,11 @@ public class FileService {
      * 단일 파일 조회
      */
     public FileDto getFile(GetFilePathDto getFilePathDto) throws IOException {
+
         String filePath = homeDir + getFilePathDto.getFilePath();
         File file = new File(filePath);
+
+        log.debug("FileService: file path: " + filePath);
 
         if (!file.exists()) {
             throw new FileNotFoundException("파일이 존재하지 않습니다.");
@@ -65,16 +68,16 @@ public class FileService {
             contents.add(str);
         }
 
-        return FileDto.from(file.getName(), contents,isSharedFile(getFilePathDto), getOrganizationName(getFilePathDto));
+        return FileDto.from(file.getName(), contents, isSharedFile(getFilePathDto), getOrganizationName(getFilePathDto));
     }
 
     private boolean isSharedFile(GetFilePathDto getFilePathDto) {
         return sharedFileRepository.findByFilepath(getFilePathDto.getFilePath()).isPresent();
     }
 
-    private String getOrganizationName(GetFilePathDto getFilePathDto){
+    private String getOrganizationName(GetFilePathDto getFilePathDto) {
         var sharedFile = sharedFileRepository.findByFilepath(getFilePathDto.getFilePath());
-        if(sharedFile.isEmpty()){
+        if (sharedFile.isEmpty()) {
             return "";
         }
         return organizationRepository.findById(sharedFile.get().getOrganization().getId()).get().getName();
@@ -87,7 +90,7 @@ public class FileService {
         String workspaceName = workspaceService.getMyWorkspace();
         String workspaceDir = homeDir + "/" + workspaceName;
 
-        if (!new File(workspaceDir).exists()){
+        if (!new File(workspaceDir).exists()) {
             return DirectoryStructureDto.from(Map.of());
         }
 
@@ -101,7 +104,7 @@ public class FileService {
                     List<String> strings = Arrays.asList(folderFiles);
                     // 하나의 path 에 대해
                     for (int i = 1; i < strings.size() - 1; i++) {
-                        String key = String.join("/",strings.subList(1,i+1));
+                        String key = String.join("/", strings.subList(1, i + 1));
                         String newValue = strings.get(i + 1);
                         if (hashMap.containsKey(key)) {
                             ArrayList<String> valueList = hashMap.get(key);
@@ -186,7 +189,7 @@ public class FileService {
         return structure;
     }
 
-    public JsonObject makeJsonStructure(String path){
+    public JsonObject makeJsonStructure(String path) {
         File root = new File(path);
 
         JsonObject parent = new JsonObject();
