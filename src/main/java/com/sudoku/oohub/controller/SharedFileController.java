@@ -32,8 +32,8 @@ public class SharedFileController {
     }
 
     @PostMapping("/v1/{organizationName}/sharedFile")
-    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @RequestBody CreateSharedFileDto createSharedFileDto) throws IOException {
-        SharedFileDto sharedFileDto = sharedFileService.saveSharedFile(organizationName, createSharedFileDto);
+    public ResponseEntity<SharedFileDto> sharingFile(@PathVariable String organizationName, @RequestBody CreateSharedFilePathDto filePathDto) throws IOException {
+        SharedFileDto sharedFileDto = sharedFileService.saveSharedFile(organizationName, filePathDto);
         return ResponseEntity.ok(sharedFileDto);
     }
 

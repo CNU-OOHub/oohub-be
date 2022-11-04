@@ -6,6 +6,7 @@ import com.sudoku.oohub.domain.Organization;
 import com.sudoku.oohub.domain.SharedFile;
 import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
+import com.sudoku.oohub.dto.request.CreateSharedFilePathDto;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
 import com.sudoku.oohub.exception.ChangeFileException;
@@ -74,7 +75,7 @@ public class SharedFileService {
     }
 
     @Transactional
-    public SharedFileDto saveSharedFile(String organizationName, CreateSharedFileDto createSharedFileDto) throws IOException {
+    public SharedFileDto saveSharedFile(String organizationName, CreateSharedFilePathDto filePathDto) throws IOException {
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(()-> new NameNotFoundException("현재 username을 가져올 수 없습니다."));
         Member member = memberRepository.findByUsername(username)
@@ -83,26 +84,27 @@ public class SharedFileService {
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
         // 로컬 파일 존재 확인
-        String filePath = homeDir + createSharedFileDto.getFilePath();
+        String filePath = homeDir + filePathDto.getFilePath();
         File file = new File(filePath);
 
         if (!file.exists()) {
             throw new FileNotFoundException("파일이 존재하지 않습니다.");
         }
 
-        if(sharedFileRepository.findByFilepath(createSharedFileDto.getFilePath()).isPresent()){
+        if(sharedFileRepository.findByFilepath(filePathDto.getFilePath()).isPresent()){
                 throw new DuplicateFileException("이미 공유된 파일입니다.");
         }
 
-        List<String> contentList = Arrays.asList(createSharedFileDto.getContents().split("/n"));
-        StringBuilder contents = new StringBuilder();
-        for(String str : contentList){
-            contents.append(str).append("\n");
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String str;
+        List<String> contents = new ArrayList<>();
+        while ((str = reader.readLine()) != null) {
+            contents.add(str);
         }
 
         SharedFile sharedFile = SharedFile.builder()
-                .filename(createSharedFileDto.getName())
-                .filepath(createSharedFileDto.getFilePath())
+                .filename(file.getName())
+                .filepath(file.getPath())
                 .contents(contents.toString())
                 .member(member)
                 .organization(organization)
