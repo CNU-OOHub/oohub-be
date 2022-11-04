@@ -2,6 +2,7 @@ package com.sudoku.oohub.controller;
 
 import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
+import com.sudoku.oohub.dto.request.CreateSharedFilePathDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
 import com.sudoku.oohub.service.SharedFileService;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class SharedFileController {
         return ResponseEntity.ok(sharedFiles);
     }
 
-    @GetMapping("/v1/{organizationName}/sharedFile/{fileName}")
-    public ResponseEntity<SharedFileDto> viewSharedFile(@PathVariable String organizationName, @PathVariable String fileName){
-        SharedFileDto sharedFileDto = sharedFileService.viewSharedFile(organizationName, fileName);
+    @PostMapping("/v1/{organizationName}/sharedFile/{fileName}/info")
+    public ResponseEntity<SharedFileDto> viewSharedFile(@PathVariable String organizationName, @PathVariable String fileName, @RequestBody CreateSharedFilePathDto filePathDto){
+        SharedFileDto sharedFileDto = sharedFileService.viewSharedFile(organizationName, filePathDto.getFilePath());
         return ResponseEntity.ok(sharedFileDto);
     }
 
@@ -36,9 +37,9 @@ public class SharedFileController {
         return ResponseEntity.ok(sharedFileDto);
     }
 
-    @DeleteMapping("/v1/{organizationName}/sharedFile/{fileName}")
-    public ResponseEntity<String> stopSharingFile(@PathVariable String organizationName, @PathVariable String fileName) {
-        sharedFileService.deleteFile(organizationName, fileName);
+    @PostMapping("/v1/{organizationName}/sharedFile/{fileName}")
+    public ResponseEntity<String> stopSharingFile(@PathVariable String organizationName, @PathVariable String fileName, @RequestBody CreateSharedFilePathDto filePathDto) {
+        sharedFileService.deleteFile(organizationName, filePathDto.getFilePath());
         return ResponseEntity.ok(fileName);
     }
 

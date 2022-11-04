@@ -8,6 +8,7 @@ import com.sudoku.oohub.dto.request.ContentDto;
 import com.sudoku.oohub.dto.request.CreateSharedFileDto;
 import com.sudoku.oohub.dto.request.GetFilePathDto;
 import com.sudoku.oohub.dto.response.SharedFileDto;
+import com.sudoku.oohub.exception.ChangeFileException;
 import com.sudoku.oohub.exception.DuplicateFileException;
 import com.sudoku.oohub.exception.FileNotFoundException;
 import com.sudoku.oohub.exception.NameNotFoundException;
@@ -51,22 +52,22 @@ public class SharedFileService {
         return sharedFiles;
     }
 
-    public SharedFileDto viewSharedFile(String organizationName, String fileName){
+    public SharedFileDto viewSharedFile(String organizationName, String filepath){
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(()-> new NameNotFoundException("현재 username을 가져올 수 없습니다."));
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
         SharedFileDto sharedFileDto = converter.convertSharedFileDto(
-                sharedFileRepository.findByOrganizationIdAndFilename(organization.getId(), fileName)
-                    .orElseThrow(() -> new FileNotFoundException("파일명: " + fileName + " 해당 파일이 존재하지 않습니다."))
+                sharedFileRepository.findByOrganizationIdAndFilepath(organization.getId(), filepath)
+                    .orElseThrow(() -> new FileNotFoundException("파일경로: " + filepath + " 해당 파일이 존재하지 않습니다."))
         );
 
         if(username.equals(sharedFileDto.getWriter())) {
             String path = homeDir +sharedFileDto.getFilepath();
             File localFile = new File(path);
             if(!localFile.exists()){
-                throw new FileNotFoundException("공유 파일에 대한 파일 정보(파일명,경로 등)가 변경되었습니다. 공유파일 삭제 후 다시 공유해주세요");
+                throw new ChangeFileException("공유 파일에 대한 파일 정보(파일명,경로 등)가 변경되었습니다. 공유파일 삭제 후 다시 공유해주세요");
             }
         }
         return sharedFileDto;
@@ -113,10 +114,10 @@ public class SharedFileService {
     }
 
     @Transactional
-    public void deleteFile(String organizationName, String fileName) {
+    public void deleteFile(String organizationName, String filepath) {
         Organization organization = organizationRepository.findByName(organizationName)
                 .orElseThrow(() -> new NameNotFoundException(organizationName + "명의 orgaization이 존재하지 않습니다."));
 
-        sharedFileRepository.deleteByOrganizationIdAndFilename(organization.getId(), fileName);
+        sharedFileRepository.deleteByOrganizationIdAndFilepath(organization.getId(), filepath);
     }
 }

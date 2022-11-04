@@ -12,9 +12,9 @@ public interface SharedFileRepository extends JpaRepository<SharedFile, Long> {
 
     List<SharedFile> findByOrganizationId(@Param("organization_id") long organization_id);
 
-    Optional<SharedFile> findByOrganizationIdAndFilename(@Param("organization_id") long organization_id, @Param("filename") String filename);
+    Optional<SharedFile> findByOrganizationIdAndFilepath(@Param("organization_id") long organization_id, @Param("filepath") String filepath);
 
-    void deleteByOrganizationIdAndFilename(@Param("organization_id") long organization_id, @Param("filename") String filename);
+    void deleteByOrganizationIdAndFilepath(@Param("organization_id") long organization_id, @Param("filename") String filepath);
 
     Optional<SharedFile> findByFilepath(@Param("filepath") String filePath);
 }

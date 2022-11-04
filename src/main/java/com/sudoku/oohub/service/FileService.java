@@ -192,7 +192,6 @@ public class FileService {
         JsonObject parent = new JsonObject();
         parent.addProperty("name", root.getName());
         System.out.println(root.getName());
-        System.out.println(root.getPath());
         File[] files = Objects.requireNonNull(root.listFiles());
         JsonArray children = new JsonArray();
         Arrays.stream(files).forEach(
@@ -201,6 +200,7 @@ public class FileService {
                         var childrenFolder = makeJsonStructure(file.getPath());
                         children.add(childrenFolder);
                     } else {
+                        System.out.println(new String(file.getName().getBytes(StandardCharsets.UTF_8)));
                         JsonObject childrenFile = new JsonObject();
                         childrenFile.addProperty("name", file.getName());
                         children.add(childrenFile);

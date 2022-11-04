@@ -64,4 +64,10 @@ public class ErrorHandler {
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
+    @ExceptionHandler(ChangeFileException.class)
+    public ResponseEntity<ErrorMessage> changeFileExceptionHandler(ChangeFileException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
+    }
+
 }
