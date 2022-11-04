@@ -1,6 +1,8 @@
 package com.sudoku.oohub.exception.handler;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.sudoku.oohub.exception.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -64,4 +66,10 @@ public class ErrorHandler {
                 .body(ErrorMessageFactory.from(e.getStatus(), e.getErrorMessage()));
     }
 
+
+    @ExceptionHandler(com.auth0.jwt.exceptions.TokenExpiredException.class)
+    public ResponseEntity<ErrorMessage> tokenExpiredExceptionHandler(TokenExpiredException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorMessageFactory.from(HttpStatus.UNAUTHORIZED, e.getMessage()));
+    }
 }
